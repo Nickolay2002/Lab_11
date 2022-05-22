@@ -4,6 +4,7 @@
 
 using namespace std;
 
+int method;
 int load_capacity;//(R)
 int ITEMS[N];//a[i]
 int current_best_index = 0, max_sum = 0;
@@ -16,6 +17,15 @@ void clear_vector(int* array, int size = n + 1)
 	for (size_t i = 0; i < size; i++)
 	{
 		array[i] = 0;
+	}
+}
+
+void print_result()
+{
+	for (size_t i = 0; i < n; i++)
+	{
+		printf("%d", vbest[MAX_BEST][i]);
+		printf("\n%d", ITEMS[i]);
 	}
 }
 
@@ -105,150 +115,59 @@ void enumerate1()
 		mark1();
 	} while (isnext1());
 }
-#pragma endregion
-
-#pragma region 2nd_task
-void mark2()
+void forward1(int p, int& sum)
 {
-	int sum = 0;
-	for (int i = 0; i < n; ++i)
-	{
-		sum += vector[i] * ITEMS[i];
-	}
-	if (sum > load_capacity || sum < max_sum)
-	{
-		return;
-	}
-	if (sum > max_sum)
-	{
-		max_sum = sum;
-		current_best_index = 0;
-	}
-	if (current_best_index < 50)
-	{
-		for (int i = 0; i < n; ++i)
+	for (int i = p; i < n; ++i)
+		if (sum + ITEMS[i] <= load_capacity)
 		{
-			vbest[current_best_index][i] = vector[i];
+			vector[i] = 1;
+			sum += ITEMS[i];
 		}
-		current_best_index++;
-	}
+		else vector[i] = 0;
 }
-bool isnext2()
+
+int back1(int& sum)
 {
-	for (int i = n - 1; i >= 0; --i)
+	if (vector[n - 1] == 1)
+	{
+		vector[n - 1] = 0;
+		sum -= ITEMS[n - 1];
+	}
+	for (int i = n - 2; i >= 0; --i)
 	{
 		if (vector[i] == 1)
 		{
 			vector[i] = 0;
+			sum -= ITEMS[i];
+			return i + 1;
 		}
-		else
-		{
-			vector[i] = 1;
-			return true;
-		}
-		return false;
+		return -1;
 	}
 }
 #pragma endregion
 
-#pragma region 3rd_task
-void mark3()
-{
-	int sum = 0;
-	for (int i = 0; i < n; ++i)
-	{
-		sum += vector[i] * ITEMS[i];
-	}
-	if (sum > load_capacity || sum < max_sum)
-	{
-		return;
-	}
-	if (sum > max_sum)
-	{
-		max_sum = sum;
-		current_best_index = 0;
-	}
-	if (current_best_index < 50)
-	{
-		for (int i = 0; i < n; ++i)
-		{
-			vbest[current_best_index][i] = vector[i];
-		}
-		current_best_index++;
-	}
-}
-bool isnext3()
-{
-	for (int i = n - 1; i >= 0; --i)
-	{
-		if (vector[i] == 1)
-		{
-			vector[i] = 0;
-		}
-		else
-		{
-			vector[i] = 1;
-			return true;
-		}
-		return false;
-	}
-}
-#pragma endregion
 
-#pragma region 4th_task
-void mark4()
-{
-	int sum = 0;
-	for (int i = 0; i < n; ++i)
-	{
-		sum += vector[i] * ITEMS[i];
-	}
-	if (sum > load_capacity || sum < max_sum)
-	{
-		return;
-	}
-	if (sum > max_sum)
-	{
-		max_sum = sum;
-		current_best_index = 0;
-	}
-	if (current_best_index < 50)
-	{
-		for (int i = 0; i < n; ++i)
-		{
-			vbest[current_best_index][i] = vector[i];
-		}
-		current_best_index++;
-	}
-}
-bool isnext4()
-{
-	for (int i = n - 1; i >= 0; --i)
-	{
-		if (vector[i] == 1)
-		{
-			vector[i] = 0;
-		}
-		else
-		{
-			vector[i] = 1;
-			return true;
-		}
-		return false;
-	}
-}
-#pragma endregion
 
 int main()
 {
 	printf_s("size of bag=");
 	scanf_s("%d", &load_capacity);
-	for (int i = 0; i < N; i++)
+	printf_s("Choose the method: \n 1.Exhaustive search. \n 2.Exhaustive search with clipping. \n 3.Exhaustive search with price. \n 4.Exhaustive search with price and cliping. \n");
+	scanf_s("%d", &method);
+	switch (method) 
 	{
-		printf_s("A[%d]=", i);
-		scanf_s("%d", &ITEMS[i]);
+	case 1:
+		for (int i = 0; i < N; i++)
+		{
+			printf_s("A[%d]=", i);
+			scanf_s("%d", &ITEMS[i]);
+		}
+		enumerate1();
+		//TODO print result: vbest[n] (set_sum) , вывести vbest и соответсвующее веса элементов (ITEMS) 
+		print_result();
+		clear_vector(vector);
+	/*case 2:
+	case 3:
+	case 4:*/
 	}
-	enumerate1();
-//TODO print result: vbest[n] (set_sum) , вывести vbest и соответсвующее веса элементов (ITEMS) 
-	clear_vector(vector);
 }
